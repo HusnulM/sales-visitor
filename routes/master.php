@@ -23,15 +23,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/findpartnumber', 'Master\ItemMasterController@findPartnumber');
     });
 
-    Route::group(['prefix' => '/master/vendor'], function () {
-        Route::get('/',             'Master\VendorMasterController@index')->middleware('checkAuth:master/item');
-        Route::get('/create',       'Master\VendorMasterController@create')->middleware('checkAuth:master/item');
-        Route::post('/save',        'Master\VendorMasterController@save')->middleware('checkAuth:master/item');
-        Route::post('/update',      'Master\VendorMasterController@update')->middleware('checkAuth:master/item');
-        Route::get('/delete/{id}',  'Master\VendorMasterController@delete')->middleware('checkAuth:master/item');  
-        Route::get('/vendorlists',  'Master\VendorMasterController@vendorLists')->middleware('checkAuth:master/item');  
-        Route::post('/findvendor',  'Master\VendorMasterController@findVendor');
-    });
+    
 
     Route::group(['prefix' => '/master/department'], function () {
         Route::get('/',             'Master\DepartmentMasterController@index')->middleware('checkAuth:master/department');
@@ -53,67 +45,14 @@ Route::group(['middleware' => 'auth'], function () {
         
     });
 
-    Route::group(['prefix' => '/master/warehouse'], function () {
-        Route::get('/',             'Master\WarehouseController@index')->middleware('checkAuth:master/warehouse');
-        Route::get('/create',       'Master\WarehouseController@create')->middleware('checkAuth:master/warehouse');
-        Route::post('/save',        'Master\WarehouseController@save')->middleware('checkAuth:master/warehouse');
-        Route::post('/update',      'Master\WarehouseController@update')->middleware('checkAuth:master/warehouse');
-        Route::get('/delete/{id}',  'Master\WarehouseController@delete')->middleware('checkAuth:master/warehouse');  
-        Route::get('/warehouselist','Master\WarehouseController@warehouseLists')->middleware('checkAuth:master/warehouse');   
-        Route::post('/findwhs',     'Master\WarehouseController@findWhs');
-    });
-
-    Route::group(['prefix' => '/master/mekanik'], function () {
-        Route::get('/',             'Master\MekanikController@index')->middleware('checkAuth:master/mekanik');
-        Route::get('/create',       'Master\MekanikController@create')->middleware('checkAuth:master/mekanik');
-        Route::post('/save',        'Master\MekanikController@save')->middleware('checkAuth:master/mekanik');
-        Route::post('/update',      'Master\MekanikController@update')->middleware('checkAuth:master/mekanik');
-        Route::get('/delete/{id}',  'Master\MekanikController@delete')->middleware('checkAuth:master/mekanik');  
-        Route::get('/mekaniklist',  'Master\MekanikController@mekanikLists')->middleware('checkAuth:master/mekanik');   
-        Route::post('/findmekanik', 'Master\MekanikController@findMekanik');
-    });
-
-    Route::group(['prefix' => '/master/kendaraan'], function () {
-        Route::get('/',               'Master\KendaraanController@index')->middleware('checkAuth:master/kendaraan');
-        Route::get('/create',         'Master\KendaraanController@create')->middleware('checkAuth:master/kendaraan');
-        Route::post('/save',          'Master\KendaraanController@save')->middleware('checkAuth:master/kendaraan');
-        Route::post('/update',        'Master\KendaraanController@update')->middleware('checkAuth:master/kendaraan');
-        Route::get('/delete/{id}',    'Master\KendaraanController@delete')->middleware('checkAuth:master/kendaraan');  
-        Route::get('/kendaraanlist',  'Master\KendaraanController@kendaraanLists')->middleware('checkAuth:master/kendaraan');   
-        Route::post('/findkendaraan', 'Master\KendaraanController@findKendaraan');
-    });
-
-    Route::group(['prefix' => '/master/doctype'], function () {
-        Route::get('/',           'Master\DoctypeController@index')->middleware('checkAuth:master/doctype');
-        Route::post('/save',      'Master\DoctypeController@save')->middleware('checkAuth:master/doctype');
-        Route::post('/update',    'Master\DoctypeController@update')->middleware('checkAuth:master/doctype');
-        Route::get('/delete/{id}','Master\DoctypeController@delete')->middleware('checkAuth:master/doctype');  
-    });
-
-    Route::group(['prefix' => '/master/docarea'], function () {
-        Route::get('/',           'Master\DocareaController@index')->middleware('checkAuth:master/docarea');  
-        Route::get('/delete/{id}','Master\DocareaController@delete')->middleware('checkAuth:master/docarea');  
-        Route::get('/getemail/{id}','Master\DocareaController@getDocAreaEmail')->middleware('checkAuth:master/docarea');  
-
-        Route::post('/save',      'Master\DocareaController@save')->middleware('checkAuth:master/docarea');
-        Route::post('/update',    'Master\DocareaController@update')->middleware('checkAuth:master/docarea');
-        Route::post('/deletemail','Master\DocareaController@deleteEmail')->middleware('checkAuth:master/docarea');  
-    });
-
-    Route::group(['prefix' => '/master/doclevel'], function () {
-        Route::get('/',           'Master\DoclevelController@index')->middleware('checkAuth:master/doclevel');  
-        Route::post('/save',      'Master\DoclevelController@save')->middleware('checkAuth:master/doclevel');
-        Route::post('/update',    'Master\DoclevelController@update')->middleware('checkAuth:master/doclevel');
-        Route::get('/delete/{id}','Master\DoclevelController@delete')->middleware('checkAuth:master/doclevel');  
-    });
-
-    Route::group(['prefix' => '/master/customer'], function () {
-        Route::get('/',             'Master\CustomerController@index')->middleware('checkAuth:master/customer');  
-        Route::post('/save',        'Master\CustomerController@save')->middleware('checkAuth:master/customer');
-        Route::post('/update',      'Master\CustomerController@update')->middleware('checkAuth:master/customer');
-        Route::get('/delete/{id}',  'Master\CustomerController@delete')->middleware('checkAuth:master/customer');  
-
-        Route::get('/lists',        'Master\CustomerController@customerlist')->middleware('checkAuth:master/customer');  
-        Route::post('/findcustomer', 'Master\CustomerController@findcustomer')->middleware('checkAuth:master/customer');  
+    Route::group(['prefix' => '/master/toko'], function () {
+        Route::get('/',             'Master\TokoController@index')->middleware('checkAuth:master/toko');
+        Route::get('/create',       'Master\TokoController@create')->middleware('checkAuth:master/toko');
+        Route::get('/edit/{id}',    'Master\TokoController@edit')->middleware('checkAuth:master/toko');
+        Route::post('/save',        'Master\TokoController@save')->middleware('checkAuth:master/toko');
+        Route::post('/update',      'Master\TokoController@update')->middleware('checkAuth:master/toko');
+        Route::get('/delete/{id}',  'Master\TokoController@delete')->middleware('checkAuth:master/toko');  
+        Route::get('/listtoko',     'Master\TokoController@listToko')->middleware('checkAuth:master/toko');  
+        Route::post('/findtoko',    'Master\TokoController@findToko');
     });
 });

@@ -45,6 +45,69 @@ function formatDateTime($dateTime, $format = "d-m-Y h:i A")
     return ($dateTime) ? date($format, strtotime($dateTime)) : $dateTime;
 }
 
+function generateIDoutlet($jenis){
+    $dcnNumber = '';
+    $getdata = DB::table('tc_nriv_toko')->where('jenis_outlet', $jenis)->first();
+    // dd($getdata);
+    if($getdata){
+        DB::beginTransaction();
+        try{
+            $leadingZero = '';
+            if(strlen($getdata->current_number) == 5){
+                $leadingZero = '0';
+            }elseif(strlen($getdata->current_number) == 4){
+                $leadingZero = '00';
+            }elseif(strlen($getdata->current_number) == 3){
+                $leadingZero = '000';
+            }elseif(strlen($getdata->current_number) == 2){
+                $leadingZero = '0000';
+            }elseif(strlen($getdata->current_number) == 1){
+                $leadingZero = '00000';
+            }else{
+                $leadingZero = $getdata->from_number;
+                $getdata->current_number = 0;
+            }
+
+            $lastnum = ($getdata->current_number*1) + 1;
+
+            if($leadingZero == ''){
+                $dcnNumber = $getdata->prefix . $lastnum; 
+            }else{
+                $dcnNumber = $getdata->prefix . $leadingZero . $lastnum; 
+            }
+            // dd($dcnNumber);
+            DB::table('tc_nriv_toko')->where('jenis_outlet', $jenis)->update([
+                'current_number' => $lastnum
+            ]);
+
+            DB::commit();
+            return $dcnNumber;
+        }catch(\Exception $e){
+            DB::rollBack();
+            return null;
+        }
+    }else{
+        $getdata = DB::table('tc_nriv_toko')->where('jenis_outlet', $jenis)->first();
+        $dcnNumber = $getdata->prefix .'100000';
+        DB::beginTransaction();
+        try{
+            DB::table('dcn_nriv')->insert([
+                'year'            => date('Y'),
+                'object'          => $doctype,
+                'current_number'  => '1',
+                'createdon'       => date('Y-m-d H:m:s'),
+                'createdby'       => Auth::user()->email ?? Auth::user()->username
+            ]);
+            DB::commit();
+            return $dcnNumber;
+        }catch(\Exception $e){
+            DB::rollBack();
+            return null;
+        }
+    }
+    
+}
+
 function generateDcnNumber($doctype){
     $dcnNumber = '';
     $getdata = DB::table('dcn_nriv')->where('year', date('Y'))->where('object',$doctype)->first();
