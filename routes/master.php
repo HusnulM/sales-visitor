@@ -45,6 +45,16 @@ Route::group(['middleware' => 'auth'], function () {
         
     });
 
+    Route::group(['prefix' => '/master/pegawai'], function () {
+        Route::get('/',             'Master\PegawaiController@index')->middleware('checkAuth:master/pegawai');
+        Route::get('/create',       'Master\PegawaiController@create')->middleware('checkAuth:master/pegawai');
+        Route::post('/save',        'Master\PegawaiController@save')->middleware('checkAuth:master/pegawai');
+        Route::post('/update',      'Master\PegawaiController@update')->middleware('checkAuth:master/pegawai');
+        Route::get('/delete/{id}',  'Master\PegawaiController@delete')->middleware('checkAuth:master/pegawai');  
+        Route::get('/listpegawai',  'Master\PegawaiController@listPegawai')->middleware('checkAuth:master/pegawai');  
+        
+    });
+
     Route::group(['prefix' => '/master/toko'], function () {
         Route::get('/',             'Master\TokoController@index')->middleware('checkAuth:master/toko');
         Route::get('/create',       'Master\TokoController@create')->middleware('checkAuth:master/toko');
