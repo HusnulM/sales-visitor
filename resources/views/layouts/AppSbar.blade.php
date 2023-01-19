@@ -103,6 +103,11 @@
         </a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" href="#" id="btn-scan-qr" title="Scan Qrcode" role="button">
+          <i class="fas fa-qrcode"></i>
+        </a>
+      </li>
+      <li class="nav-item">
         <form id="logout-form" method="post" action="{{ url('logout') }}">
           @csrf
           <a href="javascript:{}" class="nav-link" onclick="document.getElementById('logout-form').submit();" title="Logout">
@@ -178,6 +183,26 @@
   </form>
 </div>
 
+<div class="modal fade" id="modalScanQRCode" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Scan QR-Code Toko</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-lg-12">
+          <div id="reader" width="600px" height="600px"></div>
+        </div>
+      </div>      
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" id="btn-stop-scan-qr">Close</button>
+      </div>        
+    </div>
+  </div>
+</div>
 <!-- ./wrapper -->
 <!-- REQUIRED SCRIPTS -->
 <!-- jQuery -->
@@ -225,9 +250,10 @@
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <!-- <script src="{{ asset('/assets/dist/js/pages/dashboard2.js') }}"></script> -->
 
+<script src="{{ asset('/assets/js/html5-qrcode.min.js') }}"></script>
 <script>
   $(function(){
-
+    const html5QrCode = new Html5Qrcode("reader");
     $('#btn-change-pass').on('click', function(){
       // alert('tes')
       $('#modal-change-pass').modal('show');
@@ -235,6 +261,58 @@
     setTimeout(function(){ 
       $('.msgAlert').hide();
     }, 4000);
+
+    $('#btn-scan-qr').on('click', function(){
+      $('#modalScanQRCode').modal('show');
+      initialCamera()
+    });
+
+    $('#btn-stop-scan-qr').on('click', function(){
+      stopCamera()
+      $('#modalScanQRCode').modal('hide');
+    });
+
+    async function stopCamera() {
+      html5QrCode.stop().then(ignore => {
+        // QR Code scanning is stopped. 
+        console.log("QR Code scanning stopped.");
+        html5QrCode.clear();
+      }).catch(err => { 
+        // Stop failed, handle it. 
+        console.log("Unable to stop scanning.");
+      });
+    }
+
+    async function initialCamera() {
+      var devices = await Html5Qrcode.getCameras();
+      
+      const qrCodeSuccessCallback = message => {
+          // readWosData(message);
+          console.log(message);
+          alert(message)
+          html5QrCode.stop().then(ignore => {
+              // document.getElementById("reffid").focus();
+              $('#modalScanQRCode').modal('hide');
+              html5QrCode.clear();
+              setTimeout(function() { 
+                  // $('#reffid').focus();
+              }, 1000);
+          }).catch(err => {});
+          
+      }
+      const qrErrorCallback = error => {}
+      const config = {
+          fps: 10,
+          qrbox: 250
+      };
+
+      html5QrCode.start({
+          deviceId: {
+              exact: (devices.length > 1) ? devices[devices.length - 1].id : devices[0].id
+          }
+      }, config, qrCodeSuccessCallback, qrErrorCallback);
+    }
+
   });
 </script>
 @yield('additional-js')

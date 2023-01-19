@@ -3,6 +3,9 @@
 @section('title', 'Master Toko')
 
 @section('additional-css')
+<style>
+    
+</style>
 @endsection
 
 @section('content')        
@@ -46,10 +49,37 @@
 @endsection
 
 @section('additional-modal')
+<div class="modal fade" id="modal-show-qrcode">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">QR Code Toko</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="qr-code-container">
+                        <div id="qrcode" class="qr-code"></div> 
+                        <input type="hidden" id="qrcodeid">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary download-qrcode">Download QR Code</button>
+        </div>
+      </div>
+    </div>
+</div>
 
 @endsection
 
 @section('additional-js')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
     $(document).ready(function(){
         $("#tbl-dept-master").DataTable({
@@ -81,6 +111,7 @@
                 {"defaultContent": 
                     `<button class='btn btn-danger btn-sm button-delete'> <i class='fa fa-trash'></i> DELETE</button> 
                     <button class='btn btn-primary btn-sm button-edit'> <i class='fa fa-edit'></i> EDIT</button>
+                    <button class='btn btn-success btn-sm button-show-qr'> <i class='fa fa-qrcode'></i> VIEW QRCODE</button>
                     `,
                     "className": "text-center",
                     "width": "20%"
@@ -100,6 +131,47 @@
             selected_data = table.row($(this).closest('tr')).data();
             window.location = base_url+"/master/toko/edit/"+selected_data.id;
         });
+        $('#tbl-dept-master tbody').on( 'click', '.button-show-qr', function () {
+            var table = $('#tbl-dept-master').DataTable();
+            selected_data = [];
+            selected_data = table.row($(this).closest('tr')).data();
+            $('#qrcode').html('');
+            $('#qrcodeid').val(selected_data.qrtoko);
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: selected_data.qrtoko,
+                width: 265,
+                height: 260,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            $('#modal-show-qrcode').modal('show');
+        });
+
+        $('.download-qrcode').on('click', function(){
+            downloadQRCode();
+        });
+
+        function downloadQRCode(){
+            setTimeout(
+                function ()
+                {
+                    let dataUrl = document.querySelector('#qrcode').querySelector('img').src;
+                    downloadURI(dataUrl, $('#qrcodeid').val()+'.png');
+                }
+            ,1000);
+        }
+
+        function downloadURI(uri, name) {
+            var link = document.createElement("a");
+            link.download = name;
+            link.href = uri;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            delete link;
+        };
     });
 </script>
 @endsection
