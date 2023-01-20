@@ -34,7 +34,7 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-lg-4">
+                        <div class="col-lg-4 col-md-12">
                             <div class="table-responsive">
                                 <table id="tbl-item-master" class="table table-bordered table-hover table-striped table-sm" style="width:100%;">
                                     <thead>
@@ -49,16 +49,15 @@
                                 </table>
                             </div> 
                         </div>
-                        <div class="col-lg-8">
+                        <div class="col-lg-8 col-md-12">
                             <div class="table-responsive">
                                 <table id="tbl-item-check" class="table table-bordered table-hover table-striped table-sm" style="width:100%;">
-                                    <thead>
-                                        
-                                        <th>Kode Barang</th>
-                                        <th>Nama Barang</th>
+                                    <thead>                                        
+                                        <th>Detail Barang</th>
+                                        <!-- <th>Nama Barang</th>
                                         <th>Order</th>
-                                        <th>Keterangan</th>
-                                        <th style="text-align:center;"></th>
+                                        <th>Keterangan</th> -->
+                                        <!-- <th style="text-align:center;"></th> -->
                                     </thead>
                                     <tbody id="tbl-item-check-body">
             
@@ -148,27 +147,24 @@
             $('#tbl-item-check-body').append(`
                 <tr>
                     <td>
-                        `+ selected_data.material +`
-                        <input type="hidden" name="kode_barang[]" class="form-control" value="`+ selected_data.material +`" readonly/>
-                    </td>
-                    <td>
-                        `+ selected_data.matdesc +`
-                        <input type="hidden" name="nama_barang[]" class="form-control" value="`+ selected_data.matdesc +`" readonly/>
-                    </td>
-                    <td>
-                        <select name="status_order[]" class="form-control">
-                            <option value="">Order Lagi?</option>
-                            <option value="Y">Ya</option>
-                            <option value="T">Tidak</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input type="text" name="keterangan[]" class="form-control"/>
-                    </td>
-                    <td style="text-align:center;">
-                        <button type="button" class="btn btn-danger btn-sm btnRemove">
-                            <i class="fa fa-trash"></i>
-                        </button>
+                        <a>
+                         <h4> `+ selected_data.matdesc +` </h4>
+                        </a>
+                        <input type="hidden" name="kode_barang[]" class="form-control form-sm" value="`+ selected_data.material +`" readonly/>
+                        <input type="hidden" name="nama_barang[]" class="form-control form-sm" value="`+ selected_data.matdesc +`" readonly/>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <select name="status_order[]" class="form-control form-sm">
+                                    <option value="">Order Lagi?</option>
+                                    <option value="Y">Ya</option>
+                                    <option value="T">Tidak</option>
+                                </select>                                
+                            </div>
+                            <input type="text" name="keterangan[]" class="form-control form-sm"/>
+                            <button type="button" class="btn btn-danger btn-sm btnRemove">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `);
