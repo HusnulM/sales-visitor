@@ -15,15 +15,47 @@ class SalesVisitController extends Controller
         return view('transaksi.salesvisit.visit');
     }
 
-    public function saveCheckLog()
+    public function saveCheckLog(Request $req)
     {
         DB::beginTransaction();
         try{
-
+            $dataToko = DB::table('md_toko')->where('qrtoko', $req['qrtoko'])->first();
+            if($dataToko){
+                $checkCheckLog = DB::table('ts_checklog')
+                                ->where('userid', Auth::user()->id)
+                                ->where('qrtoko', $req['qrtoko'])
+                                ->where('date', date('Y-m-d'))
+                                ->first();
+                if($checkCheckLog){
+                    DB::table('ts_checklog')
+                    ->where('userid', Auth::user()->id)
+                    ->where('qrtoko', $req['qrtoko'])
+                    ->where('date', date('Y-m-d'))
+                    ->update([
+                        'checkout'     => getLocalDatabaseDateTime(),
+                        'checkinstat'  => 'Y', 
+                        'checkoutstat' => 'Y'
+                    ]);
+                }else{
+                    DB::table('ts_checklog')->insert([
+                        'userid'      => Auth::user()->id,
+                        'qrtoko'      => $req['qrtoko'],
+                        'date'        => date('Y-m-d'),
+                        'checkin'     => getLocalDatabaseDateTime(),
+                        'checkout'    => null,
+                        'checkinstat' => 'Y' 
+                    ]);
+                }
+                DB::commit();
+    
+                
+                return response()->json(['success'=>'Checklog Berhasil', 'datatoko' => $dataToko]);
+            }else{
+                return response()->json(['error' => 'QR Toko Tidak Valid / Belum Terdaftar']);
+            }
         }catch(\Exception $e){
             DB::rollBack();
-            // dd($e);
-            // return Redirect::to("/transaksi/salesvisit")->withError($e->getMessage());
+            return response()->json(['error'=>$e->getMessage()]);
         }
     }
 
@@ -43,6 +75,7 @@ class SalesVisitController extends Controller
             DB::table('ts_salesvisit01')->insert([
                 'nomorvisit' => $visitNumber,
                 'tgl_visit'  => date('Y-m-d'),
+                'qrtoko'     => $req['qrtoko'],
                 'salesman'   => $req['salesMan'],
                 'createdon'  => getLocalDatabaseDateTime(),
                 'createdby'  => Auth::user()->email ?? Auth::user()->username

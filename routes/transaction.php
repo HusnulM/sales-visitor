@@ -15,4 +15,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/save',        'Transaksi\SalesVisitController@save')->middleware('checkAuth:transaksi/salesvisit');
     });
     // transaksi/salesvisit
+
+    Route::post('/saleschecklog',   'Transaksi\SalesVisitController@saveCheckLog');
+
 });

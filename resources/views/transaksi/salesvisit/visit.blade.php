@@ -25,6 +25,9 @@
                     <div class="card-header">
                         <h3 class="card-title"></h3>
                         <div class="card-tools">
+                            <button type="button" class="btn btn-default btn-sm btn-scan-toko">
+                                <i class="fas fa-qrcode"></i> Scan Qr Toko    
+                            </button>
                             <button type="submit" class="btn btn-primary btn-sm">
                                 <i class="fas fa-save"></i> Simpan List Kunjungan    
                             </button>
@@ -32,16 +35,23 @@
                     </div>
                     <div class="card-body">                    
                         <div class="row">
-                            <div class="col-lg-6 col-md-12">
+                            <div class="col-lg-2 col-md-12">
                                 <div class="form-group">
                                     <label for="tgl">Tanggal Kunjugan</label>
                                     <input type="date" name="tglKunjungan" class="form-control" value="<?= date('Y-m-d'); ?>" readonly>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-12">
+                            <div class="col-lg-3 col-md-12">
                                 <div class="form-group">
                                     <label for="salesMan">Salesman</label>
                                     <input type="text" name="salesMan" class="form-control" value="{{ Auth::user()->name }}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-lg-7 col-md-12">
+                                <div class="form-group">
+                                    <label for="salesMan">Nama Toko</label>
+                                    <input type="text" name="namaToko" id="namaToko" class="form-control" readonly>
+                                    <input type="hidden" name="qrtoko" id="qrtoko">
                                 </div>
                             </div>
                             <div class="col-lg-12">
@@ -105,12 +115,35 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalScanQRCodeToko" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Scan QR-Code Toko</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-lg-12">
+          <div id="qrreader" width="600px" height="600px"></div>
+        </div>
+      </div>      
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default btn-stop-scan-qr">Close</button>
+      </div>        
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @section('additional-js')
 <script src="{{ asset('/assets/js/select2.min.js') }}"></script>
+<script src="{{ asset('/assets/js/html5-qrcode.min.js') }}"></script>
 <script>
     $(document).ready(function(){
+        const html5QrCode = new Html5Qrcode("qrreader");
         // find-material
         let _token   = $('meta[name="csrf-token"]').attr('content');
         $(document).on('select2:open', (event) => {
@@ -263,6 +296,77 @@
             });
         });
         
+        $('.btn-scan-toko').on('click', function(){
+            $('#modalScanQRCodeToko').modal('show');
+            initialCamera()
+        });            
+
+        $('.btn-stop-scan-qr').on('click', function(){
+            stopCamera()
+            $('#modalScanQRCodeToko').modal('hide');
+        });
+
+        async function stopCamera() {
+            html5QrCode.stop().then(ignore => {
+            // QR Code scanning is stopped. 
+                console.log("QR Code scanning stopped.");
+                html5QrCode.clear();
+            }).catch(err => { 
+                // Stop failed, handle it. 
+                console.log("Unable to stop scanning.");
+            });
+        }
+        async function initialCamera() {
+          var devices = await Html5Qrcode.getCameras();
+          // const html5QrCode = new Html5Qrcode("reader");
+          const qrCodeSuccessCallback = message => {
+              // readWosData(message);
+              // alert(message)
+              console.log(message);
+              html5QrCode.stop().then(ignore => {
+                  // document.getElementById("reffid").focus();
+                  $.ajax({
+                    url: base_url+'/saleschecklog',
+                    type:"POST",
+                    data:{
+                        qrtoko:message,
+                        _token: _token
+                    },
+                    success:function(response){
+                        console.log(response);
+                        if(response.success){
+                            alert(response.success);
+                            $('#namaToko').val(response.datatoko.nama_outlet);
+                            $('#qrtoko').val(message);
+                        }else{
+                            alert(response.error);
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                        alert(error.error);
+                    }
+                  });
+                  $('#modalScanQRCodeToko').modal('hide');
+                  html5QrCode.clear();
+                  setTimeout(function() { 
+                      // $('#reffid').focus();
+                  }, 1000);
+              }).catch(err => {});
+              
+          }
+          const qrErrorCallback = error => {}
+          const config = {
+              fps: 10,
+              qrbox: 250
+          };
+    
+          html5QrCode.start({
+              deviceId: {
+                  exact: (devices.length > 1) ? devices[devices.length - 1].id : devices[0].id
+              }
+          }, config, qrCodeSuccessCallback, qrErrorCallback);
+        }
     });
 </script>
 @endsection

@@ -23,6 +23,12 @@ class TokoController extends Controller
         return view('master.toko.edit', ['dataToko' => $data]);
     }
 
+    public function getTokoByQr($qrcode)
+    {
+        $data = DB::table('md_toko')->where('qrtoko', $qrcode)->first();
+        return $data;
+    }
+
     public function listToko(Request $request){
         $params = $request->params;        
         $whereClause = $params['sac'];

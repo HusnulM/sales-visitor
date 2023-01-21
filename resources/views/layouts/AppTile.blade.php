@@ -256,6 +256,9 @@
 <script src="{{ asset('/assets/js/html5-qrcode.min.js') }}"></script>
 <script>
   $(function(){
+
+    let _token   = $('meta[name="csrf-token"]').attr('content');
+
     const html5QrCode = new Html5Qrcode("reader");
     $('#btn-change-pass').on('click', function(){
       // alert('tes')
@@ -291,10 +294,30 @@
       // const html5QrCode = new Html5Qrcode("reader");
       const qrCodeSuccessCallback = message => {
           // readWosData(message);
-          alert(message)
+          // alert(message)
           console.log(message);
           html5QrCode.stop().then(ignore => {
               // document.getElementById("reffid").focus();
+              $.ajax({
+                url: base_url+'/saleschecklog',
+                type:"POST",
+                data:{
+                    qrtoko:message,
+                    _token: _token
+                },
+                success:function(response){
+                    console.log(response);
+                    if(response.success){
+                      alert(response.success);
+                    }else{
+                      alert(response.error);
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                    alert(error.error);
+                }
+              });
               $('#modalScanQRCode').modal('hide');
               html5QrCode.clear();
               setTimeout(function() { 
