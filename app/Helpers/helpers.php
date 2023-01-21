@@ -108,35 +108,19 @@ function generateIDoutlet($jenis){
     
 }
 
-function generateDcnNumber($doctype){
+function generateVisitNumber(){
     $dcnNumber = '';
-    $getdata = DB::table('dcn_nriv')->where('year', date('Y'))->where('object',$doctype)->first();
+    $year      = date('Y');
+    $getdata = DB::table('t_nriv')->where('object', 'VISIT')->where('nyear', $year)->first();
+    // dd($getdata);
     if($getdata){
         DB::beginTransaction();
         try{
-            $leadingZero = '';
-            if(strlen($getdata->current_number) == 5){
-                $leadingZero = '0';
-            }elseif(strlen($getdata->current_number) == 4){
-                $leadingZero = '00';
-            }elseif(strlen($getdata->current_number) == 3){
-                $leadingZero = '000';
-            }elseif(strlen($getdata->current_number) == 2){
-                $leadingZero = '0000';
-            }elseif(strlen($getdata->current_number) == 1){
-                $leadingZero = '00000';
-            }
-
-            $lastnum = ($getdata->current_number*1) + 1;
-
-            if($leadingZero == ''){
-                $dcnNumber = $doctype . '-' . substr($getdata->year,2) .'-'. $lastnum; 
-            }else{
-                $dcnNumber = $doctype . '-' . substr($getdata->year,2) .'-'. $leadingZero . $lastnum; 
-            }
-
-            DB::table('dcn_nriv')->where('year',$getdata->year)->where('object',$doctype)->update([
-                'current_number' => $lastnum
+            $lastnum   = $getdata->currentnum*1;
+            $dcnNumber = $lastnum;
+            // dd($dcnNumber);
+            DB::table('t_nriv')->where('object', 'VISIT')->where('nyear', $year)->update([
+                'currentnum' => $lastnum+1
             ]);
 
             DB::commit();
@@ -146,17 +130,20 @@ function generateDcnNumber($doctype){
             return null;
         }
     }else{
-        $dcnNumber = $doctype . '-' .substr(date('Y'),2).'-000001';
+        
         DB::beginTransaction();
         try{
-            DB::table('dcn_nriv')->insert([
-                'year'            => date('Y'),
-                'object'          => $doctype,
-                'current_number'  => '1',
+            DB::table('t_nriv')->insert([
+                'object'          => 'VISIT',
+                'nyear'           => date('Y'),
+                'fromnum'         => '4000000000',
+                'tonumber'        => '4999999999',
+                'currentnum'      => '4000000000',
                 'createdon'       => date('Y-m-d H:m:s'),
                 'createdby'       => Auth::user()->email ?? Auth::user()->username
             ]);
             DB::commit();
+            $dcnNumber = '4000000000';
             return $dcnNumber;
         }catch(\Exception $e){
             DB::rollBack();

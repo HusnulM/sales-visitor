@@ -12,6 +12,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(['prefix' => '/transaksi/salesvisit'], function () {
         Route::get('/',             'Transaksi\SalesVisitController@index')->middleware('checkAuth:transaksi/salesvisit');
+        Route::post('/save',        'Transaksi\SalesVisitController@save')->middleware('checkAuth:transaksi/salesvisit');
     });
     // transaksi/salesvisit
 });

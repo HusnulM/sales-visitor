@@ -57,7 +57,7 @@ class ItemMasterController extends Controller
         // $search = $url['query'];
         // $search = str_replace("searchName=","",$search);
 
-        $query['data'] = DB::table('v_material')->where('partnumber', 'like', '%'. $request->search . '%')->get();
+        $query['data'] = DB::table('v_material')->where('matdesc', 'like', '%'. $request->search . '%')->get();
 
         // return \Response::json($query);
         return $query;
