@@ -23,62 +23,72 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title"></h3>
+                        <h3 class="card-title">Kunjungan Sales</h3>
                         <div class="card-tools">
-                            <button type="button" class="btn btn-default btn-sm btn-scan-toko">
-                                <i class="fas fa-qrcode"></i> Scan Qr Toko    
-                            </button>
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                <i class="fas fa-save"></i> Simpan List Kunjungan    
-                            </button>
+                            @if($checklogstatus)
+                                <button type="button" class="btn btn-default btn-sm btn-scan-toko">
+                                    <i class="fas fa-qrcode"></i> Check Out    
+                                </button>
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-save"></i> Simpan List Kunjungan    
+                                </button>
+                            @endif
                         </div>
                     </div>
-                    <div class="card-body">                    
-                        <div class="row">
-                            <div class="col-lg-2 col-md-12">
-                                <div class="form-group">
-                                    <label for="tgl">Tanggal Kunjugan</label>
-                                    <input type="date" name="tglKunjungan" class="form-control" value="<?= date('Y-m-d'); ?>" readonly>
+                    <div class="card-body">        
+                        @if($checklogstatus)
+                            @if($checklogstatus->checkoutstatus == 'O')
+                                <div class="row">
+                                    <div class="col-lg-2 col-md-12">
+                                        <div class="form-group">
+                                            <label for="tgl">Tanggal Kunjugan</label>
+                                            <input type="date" name="tglKunjungan" class="form-control" value="<?= date('Y-m-d'); ?>" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-12">
+                                        <div class="form-group">
+                                            <label for="salesMan">Salesman</label>
+                                            <input type="text" name="salesMan" class="form-control" value="{{ Auth::user()->name }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-7 col-md-12">
+                                        <div class="form-group">
+                                            <label for="salesMan">Nama Toko</label>
+                                            <input type="text" name="namaToko" id="namaToko" class="form-control" value="{{ $dataToko->nama_outlet }}" readonly>
+                                            <input type="hidden" name="qrtoko" id="qrtoko" value="{{ $dataToko->qrtoko }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <select name="material" id="find-material" class="form-control"></select>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-3 col-md-12">
-                                <div class="form-group">
-                                    <label for="salesMan">Salesman</label>
-                                    <input type="text" name="salesMan" class="form-control" value="{{ Auth::user()->name }}" readonly>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12">
+                                        <div class="table-responsive">
+                                            <table id="tbl-item-check" class="table table-bordered table-hover table-striped table-sm" style="width:100%;">
+                                                <thead>                                        
+                                                    <th>Detail Barang</th>
+                                                </thead>
+                                                <tbody id="tbl-item-check-body">
+                        
+                                                </tbody>
+                                            </table>        
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-7 col-md-12">
-                                <div class="form-group">
-                                    <label for="salesMan">Nama Toko</label>
-                                    <input type="text" name="namaToko" id="namaToko" class="form-control" readonly>
-                                    <input type="hidden" name="qrtoko" id="qrtoko">
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <select name="material" id="find-material" class="form-control"></select>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-lg-12 col-md-12">
-                                <div class="table-responsive">
-                                    <table id="tbl-item-check" class="table table-bordered table-hover table-striped table-sm" style="width:100%;">
-                                        <thead>                                        
-                                            <th>Detail Barang</th>
-                                            <!-- <th>Nama Barang</th>
-                                            <th>Order</th>
-                                            <th>Keterangan</th> -->
-                                            <!-- <th style="text-align:center;"></th> -->
-                                        </thead>
-                                        <tbody id="tbl-item-check-body">
-                
-                                        </tbody>
-                                    </table>        
-                                </div>
-                            </div>
-                        </div>
+                            @else
+                                <button type="button" class="btn btn-success btn-scan-toko form-control">
+                                    <i class="fas fa-qrcode"></i> Check In    
+                                </button>
+                            @endif
+                        @else
+                            <button type="button" class="btn btn-success btn-scan-toko form-control">
+                                <i class="fas fa-qrcode"></i> Check In    
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -336,8 +346,9 @@
                         console.log(response);
                         if(response.success){
                             alert(response.success);
-                            $('#namaToko').val(response.datatoko.nama_outlet);
-                            $('#qrtoko').val(message);
+                            // $('#namaToko').val(response.datatoko.nama_outlet);
+                            // $('#qrtoko').val(message);
+                            window.location.reload();
                         }else{
                             alert(response.error);
                         }

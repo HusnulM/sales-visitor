@@ -12,7 +12,16 @@ class SalesVisitController extends Controller
 {
     public function index()
     {
-        return view('transaksi.salesvisit.visit');
+        $checkLog = DB::table('ts_checklog')->where('date', date('Y-m-d'))
+                    ->where('userid', Auth::user()->id)
+                    ->where('checkoutstatus', 'O')
+                    ->first();
+        if($checkLog){
+            $dataToko = DB::table('md_toko')->where('qrtoko', $checkLog->qrtoko)->first();
+        }else{
+            $dataToko = null;
+        }
+        return view('transaksi.salesvisit.visit', ['checklogstatus' => $checkLog, 'dataToko' => $dataToko]);
     }
 
     public function saveCheckLog(Request $req)
@@ -25,6 +34,7 @@ class SalesVisitController extends Controller
                                 ->where('userid', Auth::user()->id)
                                 ->where('qrtoko', $req['qrtoko'])
                                 ->where('date', date('Y-m-d'))
+                                ->where('checkoutstatus', 'O')
                                 ->first();
                 if($checkCheckLog){
                     DB::table('ts_checklog')
@@ -32,9 +42,10 @@ class SalesVisitController extends Controller
                     ->where('qrtoko', $req['qrtoko'])
                     ->where('date', date('Y-m-d'))
                     ->update([
-                        'checkout'     => getLocalDatabaseDateTime(),
-                        'checkinstat'  => 'Y', 
-                        'checkoutstat' => 'Y'
+                        'checkout'       => getLocalDatabaseDateTime(),
+                        'checkinstat'    => 'Y', 
+                        'checkoutstat'   => 'Y',
+                        'checkoutstatus' => 'C'
                     ]);
                 }else{
                     DB::table('ts_checklog')->insert([
