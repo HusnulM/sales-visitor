@@ -13,7 +13,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(['prefix' => '/report'], function () {
         Route::get('/salesvisit',               'Reports\KunjuganSalesController@index')->middleware('checkAuth:report/salesvisit');
+        Route::get('/detailkunjungan',          'Reports\KunjuganSalesController@detailkunjungan')->middleware('checkAuth:report/salesvisit');
         Route::get('/salesvisitdata',           'Reports\KunjuganSalesController@datakunjuganan')->middleware('checkAuth:report/salesvisit');
+        Route::get('/detaildatavisit',          'Reports\KunjuganSalesController@pemesananByKunjungan')->middleware('checkAuth:report/salesvisit');
         
         Route::get('/budgetrequest',            'Reports\ReportsController@requestbudget')->middleware('checkAuth:report/budgetrequest');
         Route::get('/budgetrequestlist',        'Reports\ReportsController@budgetRequestlist')->middleware('checkAuth:approve/budget');
