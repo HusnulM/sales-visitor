@@ -30,6 +30,7 @@ class SalesVisitController extends Controller
         try{
             $dataToko = DB::table('md_toko')->where('qrtoko', $req['qrtoko'])->first();
             if($dataToko){
+                $ckstat = '0';
                 $checkCheckLog = DB::table('ts_checklog')
                                 ->where('userid', Auth::user()->id)
                                 ->where('qrtoko', $req['qrtoko'])
@@ -47,6 +48,8 @@ class SalesVisitController extends Controller
                         'checkoutstat'   => 'Y',
                         'checkoutstatus' => 'C'
                     ]);
+
+                    $ckstat = '1';
                 }else{
                     DB::table('ts_checklog')->insert([
                         'userid'      => Auth::user()->id,
@@ -60,7 +63,7 @@ class SalesVisitController extends Controller
                 DB::commit();
     
                 
-                return response()->json(['success'=>'Checklog Berhasil', 'datatoko' => $dataToko]);
+                return response()->json(['success'=>'Checklog Berhasil', 'datatoko' => $dataToko, 'ckstat' => $ckstat]);
             }else{
                 return response()->json(['error' => 'QR Toko Tidak Valid / Belum Terdaftar']);
             }

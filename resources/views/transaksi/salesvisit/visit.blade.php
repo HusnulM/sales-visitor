@@ -29,7 +29,7 @@
                                 <button type="button" class="btn btn-default btn-sm btn-scan-toko">
                                     <i class="fas fa-qrcode"></i> Check Out    
                                 </button>
-                                <button type="submit" class="btn btn-primary btn-sm">
+                                <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-data" style="display:none;">
                                     <i class="fas fa-save"></i> Simpan List Kunjungan    
                                 </button>
                             @endif
@@ -154,6 +154,7 @@
 <script>
     $(document).ready(function(){
         const html5QrCode = new Html5Qrcode("qrreader");
+        var btnSubmit     = $('#btn-submit-data');
         // find-material
         let _token   = $('meta[name="csrf-token"]').attr('content');
         $(document).on('select2:open', (event) => {
@@ -345,10 +346,15 @@
                     success:function(response){
                         console.log(response);
                         if(response.success){
-                            alert(response.success);
+                            if(response.ckstat === '1'){
+                                // document.forms["myform"].submit()
+                                btnSubmit.click();
+                            }else{
+                                alert(response.success);
+                                window.location.reload();
+                            }
                             // $('#namaToko').val(response.datatoko.nama_outlet);
                             // $('#qrtoko').val(message);
-                            window.location.reload();
                         }else{
                             alert(response.error);
                         }
