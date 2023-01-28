@@ -47,7 +47,7 @@ class TokoController extends Controller
             if($request->file('pototoko')){
                 $companyLogo = $request->file('pototoko');
                 $filename    = $companyLogo->getClientOriginalName();
-                $filepath    = 'storage/files/toko/'. $filename;  
+                $filepath    = '/storage/files/toko/'. $filename;  
                 $companyLogo->move('storage/files/toko/', $filename);  
             }            
 
@@ -92,7 +92,7 @@ class TokoController extends Controller
                 $companyLogo = $request->file('pototoko');
                 $filename    = $companyLogo->getClientOriginalName();
                 $filepath    = '/storage/files/toko/'. $filename;  
-                $companyLogo->move('/storage/files/toko/', $filename);  
+                $companyLogo->move('storage/files/toko/', $filename);  
                 DB::table('md_toko')->where('id', $request['idoutlet'])->update([
                     'id'             => $request['idoutlet'],
                     'tanggal'        => $request['tanggal'],
