@@ -86,14 +86,18 @@ class SalesVisitController extends Controller
             $orderstt = $req['status_order'];
             $remarks  = $req['keterangan'];
 
-            DB::table('ts_salesvisit01')->insert([
+            $insertHdr = array();
+            $datHdr = array(
                 'nomorvisit' => $visitNumber,
                 'tgl_visit'  => date('Y-m-d'),
                 'qrtoko'     => $req['qrtoko'],
                 'salesman'   => $req['salesMan'],
                 'createdon'  => getLocalDatabaseDateTime(),
                 'createdby'  => Auth::user()->email ?? Auth::user()->username
-            ]);
+            );
+            array_push($insertHdr, $datHdr);
+            // DB::table('ts_salesvisit01')->insert([
+            // ]);
             $insertData = array();
             $count = 0;
             for($i = 0; $i < sizeof($material); $i++){
@@ -110,6 +114,7 @@ class SalesVisitController extends Controller
                 );
                 array_push($insertData, $data);
             }
+            insertOrUpdate($insertHdr,'ts_salesvisit01');
             insertOrUpdate($insertData,'ts_salesvisit02');
             DB::commit();
             return Redirect::to("/transaksi/salesvisit")->withSuccess('Data kunjungan sales berhasil disimpan '. $visitNumber);
