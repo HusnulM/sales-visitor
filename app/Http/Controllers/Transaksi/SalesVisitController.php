@@ -78,8 +78,11 @@ class SalesVisitController extends Controller
         // return $req;
         DB::beginTransaction();
         try{
+            $nextNumber = DB::select('call sp_NextNRivVisit("VISIT", "'.date('Y').'")');
+            // dd($nextNumber);
+            $visitNumber = $nextNumber[0]->nextnumb;
 
-            $visitNumber = generateVisitNumber();
+            // $visitNumber = generateVisitNumber();
             // dd($visitNumber);
             $material = $req['kode_barang'];
             $matdesc  = $req['nama_barang'];
