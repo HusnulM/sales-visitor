@@ -294,6 +294,22 @@ function allowDownloadOrginalDoc(){
     }
 }
 
+function checkAllowedAuth($objectName){
+    $checkData = DB::table('user_object_auth')
+    ->where('userid', Auth::user()->id)
+    ->where('object_name', $objectName)
+    ->first();
+    if($checkData){
+        if($checkData->object_val === "Y"){
+            return 1;
+        }else{
+            return 0;
+        }
+    }else{
+        return 0;
+    }
+}
+
 function apiIpdApp(){
     $ipdapi    = DB::table('general_setting')->where('setting_name', 'IPD_MODEL_API')->first();
     return $ipdapi->setting_value;

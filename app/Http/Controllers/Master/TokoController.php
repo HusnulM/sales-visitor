@@ -15,12 +15,20 @@ class TokoController extends Controller
     }
 
     public function create(){
-        return view('master.toko.create');
+        if(checkAllowedAuth('ALLOW_CREATE_MD_TOKO')){
+            return view('master.toko.create');
+        }else{
+            return Redirect::to("/master/toko")->withError('Tidak di izinkan untuk menambah master Toko');
+        }        
     }
 
     public function edit($id){
-        $data = DB::table('md_toko')->where('id', $id)->first();
-        return view('master.toko.edit', ['dataToko' => $data]);
+        if(checkAllowedAuth('ALLOW_CHANGE_MD_TOKO')){
+            $data = DB::table('md_toko')->where('id', $id)->first();
+            return view('master.toko.edit', ['dataToko' => $data]);
+        }else{
+            return Redirect::to("/master/toko")->withError('Tidak di izinkan untuk mengubah master Toko');
+        }        
     }
 
     public function getTokoByQr($qrcode)
@@ -33,7 +41,14 @@ class TokoController extends Controller
         $params = $request->params;        
         $whereClause = $params['sac'];
         $query = DB::table('md_toko')->orderBy('id');
-        return DataTables::queryBuilder($query)->toJson();
+        // getUserNameByID
+        return DataTables::queryBuilder($query)
+        ->editColumn('createdby', function ($query){
+            return [
+                'user' => getUserNameByID($query->createdby)
+             ];
+        })
+        ->toJson();
     }
 
     public function save(Request $request){
@@ -132,15 +147,19 @@ class TokoController extends Controller
     }
 
     public function delete($id){
-        DB::beginTransaction();
-        try{
-            DB::table('md_toko')->where('id', $id)->delete();
-            DB::commit();
-            return Redirect::to("/master/toko")->withSuccess('Data Toko Berhasil di Hapus');
-        } catch(\Exception $e){
-            DB::rollBack();
-            return Redirect::to("/master/toko")->withError($e->getMessage());
-        }
+        if(checkAllowedAuth('ALLOW_DELETE_MD_TOKO')){
+            DB::beginTransaction();
+            try{
+                DB::table('md_toko')->where('id', $id)->delete();
+                DB::commit();
+                return Redirect::to("/master/toko")->withSuccess('Data Toko Berhasil di Hapus');
+            } catch(\Exception $e){
+                DB::rollBack();
+                return Redirect::to("/master/toko")->withError($e->getMessage());
+            }            
+        }else{
+            return Redirect::to("/master/toko")->withError('Tidak di izinkan untuk menghapus master Toko');
+        }   
     }
 
     public function uploadMasterToko(Request $request){

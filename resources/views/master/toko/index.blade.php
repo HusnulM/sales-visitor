@@ -19,9 +19,11 @@
                         <!-- <a type="button" class="btn btn-success btn-sm btn-add-dept">
                             <i class="fas fa-plus"></i> Tambah Master Toko
                         </a> -->
+                        @if(checkAllowedAuth('ALLOW_CREATE_MD_TOKO'))
                         <a href="{{ url('/master/toko/create') }}" class="btn btn-success btn-sm">
                             <i class="fas fa-plus"></i> Tambah Master Toko
                         </a>
+                        @endif
                     </div>
                 </div>
                 <div class="card-body">
@@ -34,6 +36,7 @@
                                 <th>Tanggal</th>
                                 <th>Pemilik Toko</th>
                                 <th>Alamat</th>
+                                <th>Created By</th>
                                 <th style="text-align:center;"></th>
                             </thead>
                             <tbody>
@@ -108,10 +111,23 @@
                 {data: "tanggal", className: 'uid'},
                 {data: "contact_person", className: 'uid'},
                 {data: "alamat", className: 'uid'},
+                {data: "createdby", className: 'uid',
+                    render: function (data, type, row){
+                        return ``+ row.createdby.user + ``;
+                    },
+                },
+                // createdby
                 {"defaultContent": 
-                    `<button class='btn btn-danger btn-sm button-delete'> <i class='fa fa-trash'></i> DELETE</button> 
+                    `
+                    @if(checkAllowedAuth('ALLOW_DELETE_MD_TOKO'))
+                    <button class='btn btn-danger btn-sm button-delete'> <i class='fa fa-trash'></i> DELETE</button> 
+                    @endif
+                    @if(checkAllowedAuth('ALLOW_CHANGE_MD_TOKO'))
                     <button class='btn btn-primary btn-sm button-edit'> <i class='fa fa-edit'></i> EDIT</button>
+                    @endif
+                    @if(checkAllowedAuth('ALLOW_DISPLAY_QR_TOKO'))
                     <button class='btn btn-success btn-sm button-show-qr'> <i class='fa fa-qrcode'></i> VIEW QRCODE</button>
+                    @endif
                     `,
                     "className": "text-center",
                     "width": "20%"
