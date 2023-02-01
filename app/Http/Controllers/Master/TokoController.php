@@ -40,7 +40,13 @@ class TokoController extends Controller
     public function listToko(Request $request){
         $params = $request->params;        
         $whereClause = $params['sac'];
-        $query = DB::table('md_toko')->orderBy('id');
+
+        if(getJabatanCode() == "SLS"){
+            $query = DB::table('md_toko')->where('createdby', Auth::user()->email)->orderBy('id');
+        }else{
+            $query = DB::table('md_toko')->orderBy('id');
+        }
+
         // getUserNameByID
         return DataTables::queryBuilder($query)
         ->editColumn('createdby', function ($query){

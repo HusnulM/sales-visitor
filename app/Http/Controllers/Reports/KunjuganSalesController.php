@@ -13,11 +13,21 @@ use App\Exports\KunjunganSalesExport;
 class KunjuganSalesController extends Controller
 {
     public function index(){
-        return view('laporan.salesvisit');
+        $sales = DB::table('v_salesman')->get();
+        return view('laporan.salesvisit', ['sales' => $sales]);
     }
 
     public function detailkunjungan(){
-        return view('laporan.salesvisitdetail');
+        $sales = DB::table('v_salesman')->get();
+        return view('laporan.salesvisitdetail', ['sales' => $sales]);
+    }
+
+    public function findSalesman(Request $req){
+        
+        $query['data'] = DB::table('v_salesman')->where('name', 'like', '%'. $req->search . '%')->get();
+
+        // return \Response::json($query);
+        return $query;
     }
 
     public function datakunjuganan(Request $req){
@@ -30,6 +40,14 @@ class KunjuganSalesController extends Controller
             $query->where('date', $req->datefrom);
         }elseif(isset($req->dateto)){
             $query->where('date', $req->dateto);
+        }
+
+        if(isset($req->sales)){
+            $query->where('userid', $req->sales);
+        }
+
+        if(getJabatanCode() == "SLS"){
+            $query->where('userid', Auth::user()->id);
         }
 
         $query->orderBy('id');
@@ -57,6 +75,10 @@ class KunjuganSalesController extends Controller
             $query->where('tgl_visit', $req->datefrom);
         }elseif(isset($req->dateto)){
             $query->where('tgl_visit', $req->dateto);
+        }
+
+        if(getJabatanCode() == "SLS"){
+            $query->where('createdby', Auth::user()->email);
         }
 
         $query->orderBy('id');

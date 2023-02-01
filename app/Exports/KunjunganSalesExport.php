@@ -32,6 +32,14 @@ class KunjunganSalesExport implements FromCollection, WithHeadings, WithMapping
             $query->where('date', $req->dateto);
         }
 
+        if(isset($req->salesman)){
+            $query->where('userid', $req->salesman);
+        }
+
+        if(getJabatanCode() == "SLS"){
+            $query->where('userid', Auth::user()->id);
+        }
+
         $query->orderBy('id');
 
         return $query->get();

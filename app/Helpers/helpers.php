@@ -294,6 +294,28 @@ function allowDownloadOrginalDoc(){
     }
 }
 
+function getJabatanCode(){
+    $checkData = DB::table('t_jabatan')
+    ->where('id', Auth::user()->jabatanid)
+    ->first();
+    if($checkData){
+        return $checkData->jbtncode;
+    }else{
+        return NULL;
+    }
+}
+
+function getUserEmail($userid){
+    $checkData = DB::table('users')
+    ->where('id', $userid)
+    ->first();
+    if($checkData){
+        return $checkData->email;
+    }else{
+        return NULL;
+    }
+}
+
 function checkAllowedAuth($objectName){
     $checkData = DB::table('user_object_auth')
     ->where('userid', Auth::user()->id)

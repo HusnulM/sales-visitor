@@ -10,7 +10,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/salesvisitdata',           'Reports\KunjuganSalesController@datakunjuganan')->middleware('checkAuth:report/salesvisit');
         Route::get('/detaildatavisit',          'Reports\KunjuganSalesController@pemesananByKunjungan')->middleware('checkAuth:report/salesvisit');
         Route::post('/detaildatavisitbyid',     'Reports\KunjuganSalesController@detailDataKunjungan')->middleware('checkAuth:report/salesvisit');
-        Route::post('/detailkunjungan/export',   'Reports\KunjuganSalesController@exportdetailDataKunjungan')->middleware('checkAuth:report/salesvisit');
+        Route::post('/detailkunjungan/export',  'Reports\KunjuganSalesController@exportdetailDataKunjungan')->middleware('checkAuth:report/salesvisit');
         Route::post('/waktukunjungan/export',   'Reports\KunjuganSalesController@exportWaktuKunjungan')->middleware('checkAuth:report/salesvisit');
+
+        Route::post('/findsales',               'Reports\KunjuganSalesController@findSalesman');
+        // 
     });
 });

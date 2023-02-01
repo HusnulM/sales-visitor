@@ -30,6 +30,14 @@ class DetailKunjunganSalesExport implements FromCollection, WithHeadings, WithMa
             $query->where('tgl_visit', $req->dateto);
         }
 
+        // if(isset($req->salesman)){
+        //     $query->where('createdby', getUserEmail($req->salesman));
+        // }
+
+        if(getJabatanCode() == "SLS"){
+            $query->where('createdby', Auth::user()->email);
+        }
+
         $query->orderBy('id');
         return $query->get();
     }

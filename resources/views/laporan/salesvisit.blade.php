@@ -3,6 +3,16 @@
 @section('title', 'Laporan Kunjugan Sales')
 
 @section('additional-css')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-container {
+        display: block
+    }
+
+    .select2-container .select2-selection--single {
+        height: 36px;
+    }
+</style>
 @endsection
 
 @section('content')        
@@ -29,15 +39,24 @@
                             <form action="{{ url('report/waktukunjungan/export') }}" method="post">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-lg-2">
+                                    <div class="col-lg-2 col-md-6 col-sm-12">
                                         <label for="">Tanggal Kunjungan</label>
                                         <input type="date" class="form-control" name="datefrom" id="datefrom" value="{{ $_GET['datefrom'] ?? '' }}">
                                     </div>
-                                    <div class="col-lg-2">
+                                    <div class="col-lg-2 col-md-6 col-sm-12">
                                         <label for="">-</label>
                                         <input type="date" class="form-control" name="dateto" id="dateto" value="{{ $_GET['dateto'] ?? '' }}">
                                     </div>
-                                    <div class="col-lg-3" style="text-align:center;">
+                                    <div class="col-lg-2 col-md-6 col-sm-12">
+                                        <label for="">Salesman</label>
+                                        <select name="salesman" id="findSalesman" class="form-control">
+                                            <option value="">Tampilkan Semua Sales</option>
+                                            @foreach($sales as $key => $row)
+                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-12" style="text-align:center;">
                                         <br>
                                         <button type="button" class="btn btn-default mt-2 btn-search"> 
                                             <i class="fa fa-search"></i> Filter
@@ -81,6 +100,7 @@
 @endsection
 
 @section('additional-js')
+<script src="{{ asset('/assets/js/select2.min.js') }}"></script>
 <script>
     function validate(evt) {
         var theEvent = evt || window.event;
@@ -102,8 +122,59 @@
 
     $(document).ready(function(){
 
+        // let _token   = $('meta[name="csrf-token"]').attr('content');
+        // $(document).on('select2:open', (event) => {
+        //     const searchField = document.querySelector(
+        //         `.select2-search__field`,
+        //     );
+        //     if (searchField) {
+        //         searchField.focus();
+        //     }
+        // });
+
+        // $('#findSalesman').select2({ 
+        //     placeholder: 'Masukkan Nama Sales',
+        //     width: '100%',
+        //     minimumInputLength: 0,
+        //     ajax: {
+        //         url: base_url + '/report/findsales',
+        //         dataType: 'json',
+        //         delay: 250,
+        //         method: 'POST',
+        //         headers: {
+        //             'X-CSRF-TOKEN': _token
+        //         },
+        //         data: function (params) {
+        //             var query = {
+        //                 search: params.term,
+        //                 // custname: $('#find-customer').val()
+        //             }
+        //             return query;
+        //         },
+        //         processResults: function (data) {
+        //             // return {
+        //             //     results: response
+        //             // };
+        //             console.log(data)
+        //             return {
+        //                 results: $.map(data.data, function (item) {
+        //                     return {
+        //                         text: item.name,
+        //                         slug: item.name,
+        //                         id: item.id,
+        //                         ...item
+        //                     }
+        //                 })
+        //             };
+        //         },
+        //         cache: true
+        //     }
+        // });
+
         $('.btn-search').on('click', function(){
-            var param = '?datefrom='+ $('#datefrom').val() +'&dateto='+ $('#dateto').val();
+            var salesID = $('#findSalesman').val();
+            // alert(salesID)
+            var param = '?datefrom='+ $('#datefrom').val() +'&dateto='+ $('#dateto').val() +'&sales='+salesID;
             loadDocument(param);
         });
 
