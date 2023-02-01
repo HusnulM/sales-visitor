@@ -46,17 +46,17 @@ class TokoController extends Controller
         // }else{
         //     $query = DB::table('md_toko')->orderBy('id');
         // }
-        // $query = DB::table('md_toko')->orderBy('id');
+        $query = DB::table('md_toko')->orderBy('id');
         // // getUserNameByID
-        // return DataTables::queryBuilder($query)
+        return DataTables::queryBuilder($query)
         // ->editColumn('createdby', function ($query){
         //     return [
         //         'user' => getUserNameByID($query->createdby)
         //      ];
         // })
-        // ->toJson();
+        ->toJson();
 
-        echo "TEST";
+        // echo "TEST";
     }
 
     public function save(Request $request){
