@@ -38,8 +38,8 @@ class TokoController extends Controller
     }
 
     public function listToko(Request $request){
-        $params = $request->params;        
-        $whereClause = $params['sac'];
+        // $params = $request->params;        
+        // $whereClause = $params['sac'];
 
         if(getJabatanCode() == "SLS"){
             $query = DB::table('md_toko')->where('createdby', Auth::user()->email)->orderBy('id');
