@@ -222,4 +222,22 @@ class ItemMasterController extends Controller
             return Redirect::to("/master/item")->withError($e->getMessage());
         }
     }
+
+    public function delete($id){
+        DB::beginTransaction();
+        try{
+            $material = DB::table('t_material')->where('id', $id)->first();
+            if($material){
+                DB::table('t_material')->where('id', $id)->delete();
+                DB::table('t_material2')->where('material', $material->material)->delete();
+                DB::commit();
+                return Redirect::to("/master/item")->withSuccess('Barang Berhasil dihapus');
+            }else{
+                return Redirect::to("/master/item")->withError('Barang tidak ditemukan');
+            }
+        } catch(\Exception $e){
+            DB::rollBack();
+            return Redirect::to("/master/item")->withError($e->getMessage());
+        }
+    }
 }
