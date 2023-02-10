@@ -226,16 +226,28 @@
                         <th>Order/Tidak</th>
                    </thead>
                    <tbody>`;
-                for(var i = 0; i < results.length; i++){                    
-                    html +=`
-                    <tr>
-                        <td> `+ results[i].lineitem +` </td>
-                        <td> `+ results[i].material +` </td>
-                        <td> `+ results[i].matdesc +` </td>
-                        <td> `+ results[i].keterangan +` </td>
-                        <td> `+ results[i].status_order +` </td>
-                    </tr>
-                    `;
+                for(var i = 0; i < results.length; i++){         
+                    if(results[i].status_order === 'T'){
+                        html +=`
+                        <tr style="background-color:red; color:white;">
+                            <td> `+ results[i].lineitem +` </td>
+                            <td> `+ results[i].material +` </td>
+                            <td> `+ results[i].matdesc +` </td>
+                            <td> `+ results[i].keterangan +` </td>
+                            <td> `+ results[i].status_order +` </td>
+                        </tr>
+                        `;
+                    }else{
+                        html +=`
+                        <tr>
+                            <td> `+ results[i].lineitem +` </td>
+                            <td> `+ results[i].material +` </td>
+                            <td> `+ results[i].matdesc +` </td>
+                            <td> `+ results[i].keterangan +` </td>
+                            <td> `+ results[i].status_order +` </td>
+                        </tr>
+                        `;
+                    }      
                 }
 
             html +=`</tbody>

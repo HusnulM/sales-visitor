@@ -29,6 +29,11 @@ function getLocalDatabaseDateTime(){
     return $localDateTime[0]->lcldate;
 }
 
+function getCurrentTime(){
+    $localDateTime = DB::select('SELECT CURRENT_TIME as Curr_time');
+    return $localDateTime[0]->Curr_time;
+}
+
 function formatDate($date, $format = "d-m-Y")
 {
     if (is_null($date)) {
